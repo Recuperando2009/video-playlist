@@ -71,7 +71,15 @@
     <div id="videoPlayer">
         <video controls autoplay id="videoElement" style="max-width: 100%;"></video>
 
-        <div id="loopPopup" class="popup"></div>
+        <!-- Exibir loops de tempo -->
+        <% items.forEach(function(item) { %>
+            <div id="timeLoops">
+                <% item.loops.forEach(function(loop) { %>
+                    <div>Tempo de Início: <%= loop.inicio %>, Tempo de Fim: <%= loop.fim %>
+                    </div>
+                    <% }); %>
+            </div>
+            <% }); %>
     </div>
 
     <h1>Itens</h1>
@@ -86,8 +94,8 @@
                 <button
                     onclick="editItem('<%= item._id %>', '<%= item.nome %>', '<%= item.url %>', '<%= item.miniatura %>')">Editar</button>
 
-        <!-- Botão para adicionar loop de tempo -->
-        
+                <!-- Botão para adicionar loop de tempo -->
+
                 <button onclick="deleteItem('<%= item._id %>')">Deletar</button>
                 <button onclick="addTimeLoop('<%= item._id %>')">Adicionar Loop de Tempo</button>
             </div>
