@@ -53,6 +53,35 @@ app.post('/adicionar', (req, res) => {
         });
 });
 
+// Rota para editar um item
+app.post('/editar/:id', async (req, res) => {
+    const { nome, url, miniatura } = req.body;
+    const itemId = req.params.id;
+
+    try {
+        const updatedItem = await Item.findByIdAndUpdate(itemId, { nome: nome, url: url, miniatura: miniatura }, { new: true });
+        console.log('Item atualizado com sucesso:', updatedItem);
+        res.redirect('/');
+    } catch (err) {
+        console.error('Erro ao editar o item:', err);
+        res.status(500).send('Erro ao editar o item.');
+    }
+});
+
+// Rota para excluir um item
+app.get('/deletar/:id', async (req, res) => {
+    const itemId = req.params.id;
+
+    try {
+        const deletedItem = await Item.findByIdAndDelete(itemId);
+        console.log('Item excluído com sucesso:', deletedItem);
+        res.redirect('/');
+    } catch (err) {
+        console.error('Erro ao excluir o item:', err);
+        res.status(500).send('Erro ao excluir o item.');
+    }
+});
+
 
 // Rota para a página inicial
 app.get('/', async (req, res) => {

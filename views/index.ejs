@@ -17,6 +17,38 @@
         .error {
             color: red;
         }
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+        }
+
+        #videoPlayer {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 9999;
+        }
     </style>
 </head>
 
@@ -40,7 +72,6 @@
         <video controls autoplay id="videoElement" style="max-width: 100%;"></video>
     </div>
 
-
     <h1>Itens</h1>
 
     <div id="cardsContainer">
@@ -50,10 +81,17 @@
                     <%= item.nome %>
                 </h2>
                 <img src="<%= item.miniatura %>" alt="<%= item.nome %>">
+                <button
+                    onclick="editItem('<%= item._id %>', '<%= item.nome %>', '<%= item.url %>', '<%= item.miniatura %>')">Editar</button>
+
+                <button onclick="deleteItem('<%= item._id %>')">Deletar</button>
             </div>
             <% }); %>
     </div>
 
+    <div id="editPopup" class="popup">
+        <!-- Formulário de edição -->
+    </div>
 
     <script>
         const toggleButton = document.getElementById('toggleForm');
@@ -110,6 +148,34 @@
             }
 
             return isValid;
+        }
+
+        function editItem(itemId, itemName, itemUrl, itemMiniatura) {
+            const popup = document.getElementById('editPopup');
+            popup.innerHTML = `
+            <h2>Editar Item</h2>
+            <form action="/editar/${itemId}" method="post">
+                <label for="nome">Nome:</label><br>
+                <input type="text" id="nome" name="nome" value="${itemName}"><br>
+                <label for="url">URL do vídeo:</label><br>
+                <input type="text" id="url" name="url" value="${itemUrl}"><br>
+                <label for="miniatura">Link da Miniatura:</label><br>
+                <input type="text" id="miniatura" name="miniatura" value="${itemMiniatura}"><br>
+                <button type="submit">Salvar</button>
+                <button type="button" onclick="closePopup()">Cancelar</button>
+            </form>
+        `;
+            popup.style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('editPopup').style.display = 'none';
+        }
+
+        function deleteItem(itemId) {
+            if (confirm('Tem certeza que deseja excluir este item?')) {
+                window.location.href = '/deletar/' + itemId;
+            }
         }
     </script>
 </body>
