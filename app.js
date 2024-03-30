@@ -55,8 +55,14 @@ app.post('/adicionar', (req, res) => {
 
 
 // Rota para a página inicial
-app.get('/', (req, res) => {
-    res.render('index');
+app.get('/', async (req, res) => {
+    try {
+        const items = await Item.find({}).exec();
+        res.render('index', { items: items });
+    } catch (err) {
+        console.error('Erro ao buscar os itens:', err);
+        res.status(500).send('Erro ao buscar os itens.');
+    }
 });
 
 // Inicialização do servidor

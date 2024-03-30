@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,14 +9,17 @@
         form {
             margin: 20px;
         }
+
         .hidden {
             display: none;
         }
+
         .error {
             color: red;
         }
     </style>
 </head>
+
 <body>
     <h1>Adicionar Item</h1>
     <button id="toggleForm">Mostrar Formulário</button>
@@ -32,6 +36,25 @@
         <button type="submit">Adicionar</button>
     </form>
 
+    <div id="videoPlayer">
+        <video controls autoplay id="videoElement" style="max-width: 100%;"></video>
+    </div>
+
+
+    <h1>Itens</h1>
+
+    <div id="cardsContainer">
+        <% items.forEach(function(item, index) { %>
+            <div class="card" onclick="playVideo('<%= item.url %>')">
+                <h2>
+                    <%= item.nome %>
+                </h2>
+                <img src="<%= item.miniatura %>" alt="<%= item.nome %>">
+            </div>
+            <% }); %>
+    </div>
+
+
     <script>
         const toggleButton = document.getElementById('toggleForm');
         const form = document.getElementById('formulario');
@@ -42,7 +65,14 @@
         const urlError = document.getElementById('urlError');
         const miniaturaError = document.getElementById('miniaturaError');
 
-        toggleButton.addEventListener('click', function() {
+        function playVideo(videoUrl) {
+            const videoElement = document.getElementById('videoElement');
+            videoElement.src = videoUrl;
+            document.getElementById('videoPlayer').style.display = 'block';
+            videoElement.focus()
+        }
+
+        toggleButton.addEventListener('click', function () {
             if (form.classList.contains('hidden')) {
                 form.classList.remove('hidden');
                 toggleButton.textContent = 'Esconder Formulário';
@@ -83,4 +113,5 @@
         }
     </script>
 </body>
+
 </html>
