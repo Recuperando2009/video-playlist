@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Item</title>
+    <style>
+        form {
+            margin: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Adicionar Item</h1>
+    <button id="toggleForm">Mostrar Formulário</button>
+    <form action="/adicionar" method="post" id="formulario" class="hidden" onsubmit="return validateForm()">
+        <label for="nome">Nome:</label><br>
+        <input type="text" id="nome" name="nome"><br>
+        <span id="nomeError" class="error"></span><br>
+        <label for="url">URL do vídeo:</label><br>
+        <input type="text" id="url" name="url"><br>
+        <span id="urlError" class="error"></span><br>
+        <label for="miniatura">Link da Miniatura:</label><br>
+        <input type="text" id="miniatura" name="miniatura"><br>
+        <span id="miniaturaError" class="error"></span><br><br>
+        <button type="submit">Adicionar</button>
+    </form>
+
+    <script>
+        const toggleButton = document.getElementById('toggleForm');
+        const form = document.getElementById('formulario');
+        const nomeInput = document.getElementById('nome');
+        const urlInput = document.getElementById('url');
+        const miniaturaInput = document.getElementById('miniatura');
+        const nomeError = document.getElementById('nomeError');
+        const urlError = document.getElementById('urlError');
+        const miniaturaError = document.getElementById('miniaturaError');
+
+        toggleButton.addEventListener('click', function() {
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                toggleButton.textContent = 'Esconder Formulário';
+            } else {
+                form.classList.add('hidden');
+                toggleButton.textContent = 'Mostrar Formulário';
+            }
+        });
+
+        function validateForm() {
+            let isValid = true;
+
+            // Validar nome
+            if (nomeInput.value.length < 4) {
+                nomeError.textContent = 'O nome deve ter pelo menos 4 letras.';
+                isValid = false;
+            } else {
+                nomeError.textContent = '';
+            }
+
+            // Validar URL do vídeo
+            if (!urlInput.value.startsWith('https://')) {
+                urlError.textContent = 'O URL do vídeo deve começar com "https://".';
+                isValid = false;
+            } else {
+                urlError.textContent = '';
+            }
+
+            // Validar link da miniatura
+            if (!miniaturaInput.value.startsWith('https://')) {
+                miniaturaError.textContent = 'O link da miniatura deve começar com "https://".';
+                isValid = false;
+            } else {
+                miniaturaError.textContent = '';
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>
