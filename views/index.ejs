@@ -75,11 +75,15 @@
         <% items.forEach(function(item) { %>
             <div id="timeLoops">
                 <% item.loops.forEach(function(loop) { %>
-                    <div>Tempo de Início: <%= loop.inicio %>, Tempo de Fim: <%= loop.fim %>
+                    <div onclick="toggleTimeLoop('<%= loop.inicio %>', '<%= loop.fim %>')">Tempo de Início: <%=
+                            loop.inicio %>, Tempo de Fim: <%= loop.fim %>
                     </div>
                     <% }); %>
             </div>
             <% }); %>
+
+                <!-- Botão para voltar ao modo de reprodução normal -->
+                <button onclick="stopLoop()">Voltar ao Normal</button>
     </div>
 
     <h1>Itens</h1>
@@ -116,8 +120,47 @@
         const urlError = document.getElementById('urlError');
         const miniaturaError = document.getElementById('miniaturaError');
 
+        let isLooping = false;
+        let loopStartTime = 0;
+        let loopEndTime = 0;
+
+        function toggleTimeLoop(startTime, endTime) {
+            if (!isLooping || (loopStartTime !== startTime && loopEndTime !== endTime)) {
+                startLoop(startTime, endTime);
+            } else {
+                stopLoop();
+            }
+        }
+
+        function startLoop(startTime, endTime) {
+            const video = document.getElementById('videoElement');
+            loopStartTime = timeToSeconds(startTime);
+            loopEndTime = timeToSeconds(endTime);
+            video.currentTime = loopStartTime;
+            isLooping = true;
+            video.addEventListener('timeupdate', repeatDuringLoop);
+        }
+
+        function stopLoop() {
+            const video = document.getElementById('videoElement');
+            isLooping = false;
+            video.removeEventListener('timeupdate', repeatDuringLoop);
+        }
+
+        function repeatDuringLoop() {
+            const video = document.getElementById('videoElement');
+            if (video.currentTime >= loopEndTime) {
+                video.currentTime = loopStartTime;
+            }
+        }
+
+        function timeToSeconds(time) {
+            const [hours, minutes, seconds] = time.split(':').map(Number);
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
         function addTimeLoop(itemId) {
-            const popup = document.getElementById('loopPopup');
+            const popup = document.getElementById('editPopup');
             popup.innerHTML = `
             <h2>Adicionar Loop de Tempo</h2>
             <form action="/addloop/${itemId}" method="post">
@@ -133,7 +176,7 @@
         }
 
         function closeLoopPopup() {
-            document.getElementById('loopPopup').style.display = 'none';
+            document.getElementById('editPopup').style.display = 'none';
         }
 
         function playVideo(videoUrl) {
