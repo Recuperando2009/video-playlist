@@ -70,6 +70,8 @@
 
     <div id="videoPlayer">
         <video controls autoplay id="videoElement" style="max-width: 100%;"></video>
+
+        <div id="loopPopup" class="popup"></div>
     </div>
 
     <h1>Itens</h1>
@@ -84,7 +86,10 @@
                 <button
                     onclick="editItem('<%= item._id %>', '<%= item.nome %>', '<%= item.url %>', '<%= item.miniatura %>')">Editar</button>
 
+        <!-- Botão para adicionar loop de tempo -->
+        
                 <button onclick="deleteItem('<%= item._id %>')">Deletar</button>
+                <button onclick="addTimeLoop('<%= item._id %>')">Adicionar Loop de Tempo</button>
             </div>
             <% }); %>
     </div>
@@ -102,6 +107,26 @@
         const nomeError = document.getElementById('nomeError');
         const urlError = document.getElementById('urlError');
         const miniaturaError = document.getElementById('miniaturaError');
+
+        function addTimeLoop(itemId) {
+            const popup = document.getElementById('loopPopup');
+            popup.innerHTML = `
+            <h2>Adicionar Loop de Tempo</h2>
+            <form action="/addloop/${itemId}" method="post">
+                <label for="inicio">Tempo de Início (HH:MM:SS)</label><br>
+                <input type="text" id="inicio" name="inicio" placeholder="00:00:00"><br>
+                <label for="fim">Tempo de Fim (HH:MM:SS)</label><br>
+                <input type="text" id="fim" name="fim" placeholder="00:00:00"><br>
+                <button type="submit">Adicionar</button>
+                <button type="button" onclick="closeLoopPopup()">Cancelar</button>
+            </form>
+        `;
+            popup.style.display = 'block';
+        }
+
+        function closeLoopPopup() {
+            document.getElementById('loopPopup').style.display = 'none';
+        }
 
         function playVideo(videoUrl) {
             const videoElement = document.getElementById('videoElement');

@@ -26,12 +26,12 @@ db.once('open', function () {
 const itemSchema = new mongoose.Schema({
     nome: String,
     url: String,
-    miniatura: String, // Novo campo para o link da miniatura
+    miniatura: String,
+    loops: [{ inicio: String, fim: String }] // Campo para armazenar os loops de tempo
 });
 
 const Item = mongoose.model('Item', itemSchema);
 
-// Rota para adicionar um item
 // Rota para adicionar um item
 app.post('/adicionar', (req, res) => {
     const { nome, url, miniatura } = req.body; // Destructuring para extrair os campos do corpo da requisição
@@ -40,6 +40,7 @@ app.post('/adicionar', (req, res) => {
         nome: nome,
         url: url,
         miniatura: miniatura, // Capturando o valor do novo campo
+
     });
 
     newItem.save()
@@ -79,6 +80,32 @@ app.get('/deletar/:id', async (req, res) => {
     } catch (err) {
         console.error('Erro ao excluir o item:', err);
         res.status(500).send('Erro ao excluir o item.');
+    }
+});
+
+// Rota para adicionar um loop de tempo ao vídeo
+app.post('/addloop/:id', async (req, res) => {
+    const itemId = req.params.id;
+    const { inicio, fim } = req.body;
+
+    try {
+        const item = await Item.findById(itemId);
+        if (!item) {
+            return res.status(404).send('Item não encontrado.');
+        }
+
+        if (!item.loops) {
+            item.loops = [];
+        }
+
+        item.loops.push({ inicio: inicio, fim: fim });
+        await item.save();
+
+        console.log('Loop de tempo adicionado com sucesso:', item);
+        res.redirect('/');
+    } catch (err) {
+        console.error('Erro ao adicionar loop de tempo:', err);
+        res.status(500).send('Erro ao adicionar loop de tempo.');
     }
 });
 
